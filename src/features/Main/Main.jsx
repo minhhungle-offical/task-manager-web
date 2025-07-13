@@ -1,5 +1,8 @@
 import { MainLayout } from '@/components/Layouts/MainLayout'
+import { lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
+
+const Employees = lazy(() => import('@/features/Employees/page/Employees'))
 
 export default function Main() {
   return (
@@ -7,7 +10,7 @@ export default function Main() {
       <Routes>
         <Route index element={<Navigate to="tasks" />} />
         <Route path="tasks" element={<div>task</div>} />
-        <Route path="employees" element={<div>employee</div>} />
+        <Route path="employees" element={<Employees />} />
         <Route path="messages" element={<div>message</div>} />
       </Routes>
     </MainLayout>

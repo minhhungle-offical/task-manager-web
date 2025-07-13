@@ -1,10 +1,10 @@
 import { STATUS } from '@/constants/common'
 import { authActions, loginByPhone, verifyOtpByPhone } from '@/stores/slices/authSlice'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import { Box, Button, Container, Dialog, Paper, Stack, Typography } from '@mui/material'
+import { Alert, Box, Button, Container, Dialog, Paper, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { ManagerLoginForm } from '../components/ManagerLoginForm'
 import { VerifyForm } from '../components/VerifyForm'
@@ -83,6 +83,10 @@ export function ManagerLogin() {
     setShowVerify(false)
   }
 
+  if (token) {
+    return <Navigate to="/dashboard" />
+  }
+
   return (
     <Container maxWidth="sm">
       <Stack justifyContent="center" alignItems="center" spacing={4} minHeight="100vh">
@@ -93,6 +97,15 @@ export function ManagerLogin() {
             <Typography variant="h5" fontWeight={600}>
               Manager Login
             </Typography>
+          </Box>
+
+          <Box sx={{ mb: 2 }}>
+            <Alert severity="warning">
+              This is just a trial version. Please use a phone number that has been verified in
+              Twilio.
+              <br />
+              <strong> Format: +CountryCodePhoneNumber</strong> (e.g. <strong>+84989830760</strong>)
+            </Alert>
           </Box>
 
           <Box width="100%">

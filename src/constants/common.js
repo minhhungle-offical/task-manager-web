@@ -9,3 +9,7 @@ export const STATUS = {
   REMOVED: 'removed',
   FAILED: 'failed',
 }
+
+export function debug(title, data) {
+  return console.log(`[DEBUG] ${title}: `, data)
+}

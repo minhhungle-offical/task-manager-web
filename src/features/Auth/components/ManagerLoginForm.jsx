@@ -5,7 +5,12 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 const schema = z.object({
-  phone: z.string().regex(/^\+84\d{9}$/, 'Phone must start with +84 and have 9 digits after that'),
+  phone: z
+    .string()
+    .regex(
+      /^\+\d{1,4}\d{6,12}$/,
+      'Phone must start with + and include country code followed by number',
+    ),
 })
 
 export function ManagerLoginForm({ loading, onSubmit }) {

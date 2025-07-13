@@ -1,4 +1,15 @@
-import { Avatar, Box, Button, Container, Divider, Paper, Stack, Typography } from '@mui/material'
+import {
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  Container,
+  Divider,
+  LinearProgress,
+  Paper,
+  Stack,
+  Typography,
+} from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { getMe, updateMe } from '@/stores/slices/authSlice'
@@ -29,25 +40,40 @@ export default function ProfilePage() {
     dispatch(updateMe(formData))
   }
 
+  if (status === STATUS.LOADING) {
+    return <LinearProgress />
+  }
+
   return (
     <Container maxWidth="sm">
       <Box py={5}>
+        <Box sx={{ mb: 3 }}>
+          <Button variant="text" onClick={() => navigate('/dashboard')}>
+            ← Back to Dashboard
+          </Button>
+        </Box>
         <Stack spacing={4}>
           <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-            <Typography variant="subtitle1" fontWeight={600} mb={2}>
-              Edit Profile
+            <Typography variant="h5" fontWeight={600} mb={2}>
+              Profile
             </Typography>
+
+            <Chip
+              label={profile?.role?.toUpperCase() || 'N/A'}
+              color={profile?.role === 'admin' ? 'error' : 'primary'}
+              variant="outlined"
+              size="small"
+              sx={{ mb: 2, borderRadius: '4px', fontWeight: 600 }}
+            />
+
             <Divider sx={{ mb: 3 }} />
+
             <ProfileForm
               loading={status === STATUS.LOADING}
               data={profile}
               onSubmit={handleSubmit}
             />
           </Paper>
-
-          <Button variant="text" onClick={() => navigate('/dashboard')}>
-            ← Back to Dashboard
-          </Button>
         </Stack>
       </Box>
     </Container>

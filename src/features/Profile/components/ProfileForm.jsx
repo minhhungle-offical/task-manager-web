@@ -1,10 +1,10 @@
+import { AvatarUploadField } from '@/components/FormFields/AvatarUploadField'
 import { InputField } from '@/components/FormFields/InputField'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Button, Stack } from '@mui/material'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
-import { AvatarUploadField } from '@/components/FormFields/AvatarUploadField'
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),

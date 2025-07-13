@@ -1,4 +1,5 @@
-import { lazy } from 'react'
+import { LinearProgress } from '@mui/material'
+import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 const Auth = lazy(() => import('@/features/Auth/Auth'))
@@ -8,13 +9,15 @@ const Main = lazy(() => import('@/features/Main/Main'))
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="welcome" />} />
-      <Route path="welcome" element={<Welcome />} />
-      <Route path="auth/*" element={<Auth />} />
-      <Route path="profile" element={<Profile />} />
-      <Route path="dashboard/*" element={<Main />} />
-    </Routes>
+    <Suspense fallback={<LinearProgress />}>
+      <Routes>
+        <Route path="/" element={<Navigate to="welcome" />} />
+        <Route path="welcome" element={<Welcome />} />
+        <Route path="auth/*" element={<Auth />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="dashboard/*" element={<Main />} />
+      </Routes>
+    </Suspense>
   )
 }
 

@@ -81,7 +81,7 @@ export const authSlice = createSlice({
       })
       .addCase(loginByPhone.rejected, (state, { payload }) => {
         state.status = STATUS.FAILED
-        state.error = payload.message
+        state.error = `${payload}`
       })
 
     //  verify otp by phone
@@ -93,14 +93,14 @@ export const authSlice = createSlice({
       .addCase(verifyOtpByPhone.fulfilled, (state, { payload }) => {
         state.status = STATUS.VERIFIED
         state.token = payload.token
-        state.user = payload.user
+        state.profile = payload.user
       })
       .addCase(verifyOtpByPhone.rejected, (state, { payload }) => {
         state.status = STATUS.FAILED
-        state.error = payload.message
+        state.error = `${payload}`
       })
 
-    // Profile
+    // get profile
     builder
       .addCase(getMe.pending, (state) => {
         state.status = STATUS.LOADING
@@ -112,7 +112,22 @@ export const authSlice = createSlice({
       })
       .addCase(getMe.rejected, (state, { payload }) => {
         state.status = STATUS.FAILED
-        state.error = payload.message
+        state.error = `${payload}`
+      })
+
+    // update profile
+    builder
+      .addCase(updateMe.pending, (state) => {
+        state.status = STATUS.LOADING
+        state.error = null
+      })
+      .addCase(updateMe.fulfilled, (state, { payload }) => {
+        state.status = STATUS.UPDATED
+        state.profile = payload
+      })
+      .addCase(updateMe.rejected, (state, { payload }) => {
+        state.status = STATUS.FAILED
+        state.error = `${payload}`
       })
   },
 })

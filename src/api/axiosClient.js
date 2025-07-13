@@ -15,7 +15,6 @@ axiosClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
 
-    console.log('token: ', token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -31,7 +30,7 @@ axiosClient.interceptors.response.use(
   },
   (error) => {
     const status = error.response?.status
-    const message = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.'
+    const message = error.response?.data?.message || 'Something went wrong!'
 
     if (status === 401) {
       console.warn('Token invalid. Removing token & redirecting...')
@@ -41,8 +40,7 @@ axiosClient.interceptors.response.use(
       // window.location.href = '/auth/login'
     }
 
-    console.error('API Error:', message)
-    return Promise.reject(error)
+    return Promise.reject(message)
   },
 )
 

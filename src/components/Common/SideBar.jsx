@@ -7,6 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
   alpha,
+  ListItem,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 import GroupIcon from '@mui/icons-material/Group'
@@ -15,10 +16,10 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble'
 
 const sidebarItems = [
   {
-    id: 'messages',
-    label: 'Messages',
-    icon: <ChatBubbleIcon />,
-    path: '/dashboard/messages',
+    id: 'tasks',
+    label: 'Tasks',
+    icon: <AssignmentIcon />,
+    path: '/dashboard/tasks',
     hasPermission: true,
   },
   {
@@ -29,42 +30,44 @@ const sidebarItems = [
     hasPermission: true,
   },
   {
-    id: 'tasks',
-    label: 'Tasks',
-    icon: <AssignmentIcon />,
-    path: '/dashboard/tasks',
+    id: 'messages',
+    label: 'Messages',
+    icon: <ChatBubbleIcon />,
+    path: '/dashboard/messages',
     hasPermission: true,
   },
 ]
 
-export default function Sidebar({ pathname }) {
+export default function Sidebar({ pathname, sidebarWidth = 250 }) {
   return (
     <Box
+      boxShadow={1}
       sx={{
-        width: 250,
+        width: sidebarWidth,
         height: '100vh',
         borderRight: '1px solid #e0e0e0',
-        p: 2,
+        p: 1.5,
         bgcolor: 'white',
       }}
     >
-      <Typography
-        variant="h6"
-        noWrap
-        component={Link}
-        to="/"
-        sx={{
-          display: { xs: 'none', md: 'flex' },
-          fontFamily: 'monospace',
-          fontWeight: 700,
-          letterSpacing: '.2rem',
-          color: 'primary.main',
-          textDecoration: 'none',
-          mb: 4,
-        }}
-      >
-        TASKS MANAGER
-      </Typography>
+      <List>
+        <Typography
+          variant="h5"
+          noWrap
+          component={Link}
+          to="/"
+          sx={{
+            display: { xs: 'none', md: 'flex' },
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            letterSpacing: '.1rem',
+            color: 'primary.main',
+            textDecoration: 'none',
+          }}
+        >
+          TASKS MANAGER
+        </Typography>
+      </List>
 
       <List>
         {sidebarItems
@@ -72,36 +75,37 @@ export default function Sidebar({ pathname }) {
           .map((item) => {
             const isActive = pathname.startsWith(item.path)
             return (
-              <ListItemButton
-                key={item.id}
-                component={Link}
-                to={item.path}
-                selected={isActive}
-                sx={{
-                  borderRadius: 0,
-                  mb: 1,
-                  color: isActive ? 'primary.main' : 'text.primary',
-                  '&:hover': {
-                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.05),
-                  },
-                  '&.Mui-selected': {
-                    borderRight: '3px solid',
-                    borderColor: 'primary.main',
-                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
-                    fontWeight: 600,
-                  },
-                }}
-              >
-                <ListItemIcon
+              <ListItem key={item.id} disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to={item.path}
+                  selected={isActive}
                   sx={{
-                    color: isActive ? 'primary.main' : 'text.secondary',
-                    minWidth: 36,
+                    borderRadius: 0,
+                    mb: 1,
+                    color: isActive ? 'primary.main' : 'text.primary',
+                    '&:hover': {
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.05),
+                    },
+                    '&.Mui-selected': {
+                      borderRight: '3px solid',
+                      borderColor: 'primary.main',
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                      fontWeight: 600,
+                    },
                   }}
                 >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
+                  <ListItemIcon
+                    sx={{
+                      color: isActive ? 'primary.main' : 'text.secondary',
+                      minWidth: 36,
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
             )
           })}
       </List>
