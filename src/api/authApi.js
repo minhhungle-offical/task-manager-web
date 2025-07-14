@@ -10,6 +10,9 @@ export const authApi = {
   verifyOtpByPhone(body) {
     return axiosClient.post(`${url}/verify-otp-by-phone`, body)
   },
+  resendOtpByPhone(body) {
+    return axiosClient.post(`${url}/resend-otp-by-phone`, body)
+  },
 
   // email
   loginByEmail(body) {
@@ -17,6 +20,9 @@ export const authApi = {
   },
   verifyOtpByEmail(body) {
     return axiosClient.post(`${url}/verify-otp-by-email`, body)
+  },
+  resendOtpByEmail(body) {
+    return axiosClient.post(`${url}/resend-otp-by-email`, body)
   },
 
   // profile

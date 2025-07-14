@@ -1,6 +1,7 @@
 import { Delete, Edit } from '@mui/icons-material'
 import { Box, Chip, Tooltip, alpha } from '@mui/material'
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid'
+import Visibility from '@mui/icons-material/Visibility'
 import dayjs from 'dayjs'
 
 export function TaskList({
@@ -11,6 +12,7 @@ export function TaskList({
   onPaginationModelChange,
   onEdit,
   onRemove,
+  canEdit,
 }) {
   const baseColProps = {
     sortable: false,
@@ -82,26 +84,42 @@ export function TaskList({
       align: 'center',
       headerAlign: 'center',
       ...baseColProps,
-      getActions: ({ row }) => [
-        <GridActionsCellItem
-          icon={
-            <Tooltip title="Edit">
-              <Edit color="primary" />
-            </Tooltip>
-          }
-          label="Edit"
-          onClick={() => onEdit?.(row)}
-        />,
-        <GridActionsCellItem
-          icon={
-            <Tooltip title="Delete">
-              <Delete color="error" />
-            </Tooltip>
-          }
-          label="Delete"
-          onClick={() => onRemove?.(row)}
-        />,
-      ],
+      getActions: ({ row }) => {
+        if (canEdit) {
+          return [
+            <GridActionsCellItem
+              icon={
+                <Tooltip title="Edit">
+                  <Edit color="primary" />
+                </Tooltip>
+              }
+              label="Edit"
+              onClick={() => onEdit?.(row)}
+            />,
+            <GridActionsCellItem
+              icon={
+                <Tooltip title="Delete">
+                  <Delete color="error" />
+                </Tooltip>
+              }
+              label="Delete"
+              onClick={() => onRemove?.(row)}
+            />,
+          ]
+        }
+
+        return [
+          <GridActionsCellItem
+            icon={
+              <Tooltip title="View">
+                <Visibility color="primary" />
+              </Tooltip>
+            }
+            label="View"
+            onClick={() => onEdit?.(row)}
+          />,
+        ]
+      },
     },
   ]
 

@@ -44,12 +44,9 @@ export function ProfileForm({ loading = false, data, onSubmit }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
-  const id = data?.id
-
   const handleFormSubmit = handleSubmit((values) => {
-    if (!id) return
     const formData = new FormData()
-    formData.append('id', data.id)
+
     formData.append('name', values.name)
     formData.append('email', values.email)
     formData.append('phone', values.phone)
@@ -57,6 +54,7 @@ export function ProfileForm({ loading = false, data, onSubmit }) {
     if (values.avatar instanceof File) {
       formData.append('avatar', values.avatar)
     }
+    console.log(formData)
     onSubmit?.(formData)
   })
 

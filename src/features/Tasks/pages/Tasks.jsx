@@ -23,6 +23,7 @@ import { AddEditTaskForm } from '../components/AddEditTaskForm'
 import { TaskFilter } from '../components/TaskFilter'
 import { TaskList } from '../components/TaskList'
 import AddIcon from '@mui/icons-material/Add'
+import socket from '@/utils/socket'
 
 export default function Tasks() {
   const [selectedItem, setSelectedItem] = useState(null)
@@ -34,7 +35,11 @@ export default function Tasks() {
 
   const { status, data, filter, pagination } = useSelector((state) => state.task)
   const { activeData } = useSelector((state) => state.employee)
+  const { profile } = useSelector((state) => state.auth)
+
   const loading = status === STATUS.LOADING
+
+  const canEdit = profile?.role === 'manager'
 
   const fetchData = useCallback((filter) => {
     dispatch(taskGetAll(filter))
@@ -55,6 +60,23 @@ export default function Tasks() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
+
+  useEffect(() => {
+    if (!socket || !profile?.id) return
+
+    socket.emit('joinRoom', profile.id)
+
+    const handleTaskAssigned = () => {
+      fetchData(filter)
+    }
+
+    socket.on('task-assigned', handleTaskAssigned)
+
+    return () => {
+      socket.off('task-assigned', handleTaskAssigned)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id])
 
   function handleClose() {
     setSelectedItem(null)
@@ -108,17 +130,19 @@ export default function Tasks() {
               Task management
             </Typography>
 
-            <Box>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => handleAddNew?.()}
-                loading={loading === STATUS.LOADING}
-                disabled={loading === STATUS.LOADING}
-              >
-                Add new
-              </Button>
-            </Box>
+            {profile?.role === 'manager' && (
+              <Box>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => handleAddNew?.()}
+                  loading={loading === STATUS.LOADING}
+                  disabled={loading === STATUS.LOADING}
+                >
+                  Add new
+                </Button>
+              </Box>
+            )}
           </Stack>
         </Box>
 
@@ -140,6 +164,7 @@ export default function Tasks() {
           <TaskList
             loading={loading}
             params={filter}
+            canEdit={canEdit}
             total={pagination?.total}
             data={data}
             onRemove={(item) => setRemoveItem(item)}
@@ -157,6 +182,7 @@ export default function Tasks() {
         <DialogContent dividers>
           <Box>
             <AddEditTaskForm
+              canEdit={canEdit}
               ref={formRef}
               onSubmit={handleSubmit}
               data={selectedItem}
@@ -171,15 +197,17 @@ export default function Tasks() {
         </DialogContent>
 
         <DialogActions>
-          <Button
-            loading={loading}
-            disabled={loading}
-            variant="contained"
-            color="success"
-            onClick={() => formRef?.current?.submit()}
-          >
-            {selectedItem ? 'Save' : 'Create '}
-          </Button>
+          {canEdit && (
+            <Button
+              loading={loading}
+              disabled={loading}
+              variant="contained"
+              color="success"
+              onClick={() => formRef?.current?.submit()}
+            >
+              {selectedItem ? 'Save' : 'Create '}
+            </Button>
+          )}
 
           <Button loading={loading} disabled={loading} variant="outlined" onClick={handleClose}>
             Cancel

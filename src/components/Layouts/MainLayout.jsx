@@ -7,8 +7,19 @@ import { Header } from '../Common/Header'
 import Sidebar from '../Common/SideBar'
 import { STATUS } from '@/constants/common'
 import { employeeGetActive } from '@/stores/slices/employeeSlice'
+import GroupIcon from '@mui/icons-material/Group'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble'
 
 const sidebarWidth = 250
+
+const hasPermission = (roleList, role) => {
+  if (Array.isArray(roleList) && roleList.length && role) {
+    return roleList.includes(role)
+  }
+
+  return false
+}
 
 export function MainLayout({ children }) {
   const { pathname } = useLocation()
@@ -16,6 +27,30 @@ export function MainLayout({ children }) {
   const token = useSelector((state) => state.auth.token)
   const profile = useSelector((state) => state.auth.profile)
   const status = useSelector((state) => state.auth.status)
+
+  const navList = [
+    {
+      id: 'tasks',
+      label: 'Tasks',
+      icon: <AssignmentIcon />,
+      path: '/dashboard/tasks',
+      hasPermission: hasPermission(['manager', 'employee'], profile?.role),
+    },
+    {
+      id: 'employees',
+      label: 'Employees',
+      icon: <GroupIcon />,
+      path: '/dashboard/employees',
+      hasPermission: hasPermission(['manager'], profile?.role),
+    },
+    {
+      id: 'messages',
+      label: 'Messages',
+      icon: <ChatBubbleIcon />,
+      path: '/dashboard/messages',
+      hasPermission: hasPermission(['manager', 'employee'], profile?.role),
+    },
+  ]
 
   useEffect(() => {
     dispatch(employeeGetActive())
@@ -39,7 +74,7 @@ export function MainLayout({ children }) {
   return (
     <Stack direction="row" height="100vh" sx={{ bgcolor: '#fafafa' }}>
       <Box width={sidebarWidth}>
-        <Sidebar pathname={pathname} profile={profile} />
+        <Sidebar pathname={pathname} profile={profile} navList={navList} />
       </Box>
       <Box sx={{ width: `calc(100% - ${sidebarWidth}px)` }}>
         <Stack sx={{ overflow: 'auto', height: '100vh' }}>

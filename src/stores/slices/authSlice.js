@@ -1,6 +1,7 @@
 import { authApi } from '@/api/authApi'
 import { STATUS } from '@/constants/common'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
 
 const name = 'auth'
 const api = authApi
@@ -9,13 +10,16 @@ const initialState = {
   profile: null,
   token: localStorage.getItem('token') || '',
   phone: '',
+  email: '',
   status: 'idle',
   error: '',
   accessCodeId: '',
 }
 
+// ======= THUNKS =======
+// Phone
 export const loginByPhone = createAsyncThunk(
-  `${name}/authLogin`,
+  `${name}/authLoginByPhone`,
   async (body, { rejectWithValue }) => {
     try {
       return await api.loginByPhone(body)
@@ -26,7 +30,7 @@ export const loginByPhone = createAsyncThunk(
 )
 
 export const verifyOtpByPhone = createAsyncThunk(
-  `${name}/authVerifyOtp`,
+  `${name}/verifyOtpByPhone`,
   async (body, { rejectWithValue }) => {
     try {
       return await api.verifyOtpByPhone(body)
@@ -36,6 +40,52 @@ export const verifyOtpByPhone = createAsyncThunk(
   },
 )
 
+export const resendOtpByPhone = createAsyncThunk(
+  `${name}/resendOtpByPhone`,
+  async (body, { rejectWithValue }) => {
+    try {
+      return await api.resendOtpByPhone(body)
+    } catch (error) {
+      return rejectWithValue(error)
+    }
+  },
+)
+
+// Email
+export const loginByEmail = createAsyncThunk(
+  `${name}/authLoginByEmail`,
+  async (body, { rejectWithValue }) => {
+    try {
+      return await api.loginByEmail(body)
+    } catch (error) {
+      return rejectWithValue(error)
+    }
+  },
+)
+
+export const verifyOtpByEmail = createAsyncThunk(
+  `${name}/verifyOtpByEmail`,
+  async (body, { rejectWithValue }) => {
+    try {
+      return await api.verifyOtpByEmail(body)
+    } catch (error) {
+      return rejectWithValue(error)
+    }
+  },
+)
+
+export const resendOtpByEmail = createAsyncThunk(
+  `${name}/resendOtpByEmail`,
+  async (body, { rejectWithValue }) => {
+    try {
+      return await api.resendOtpByEmail(body)
+    } catch (error) {
+      return rejectWithValue(error)
+    }
+  },
+)
+
+// Me
 export const getMe = createAsyncThunk(`${name}/getMe`, async (_, { rejectWithValue }) => {
   try {
     return await api.getMe()
@@ -52,24 +102,28 @@ export const updateMe = createAsyncThunk(`${name}/updateMe`, async (body, { reje
   }
 })
 
+// ======= SLICE =======
 export const authSlice = createSlice({
   name,
   initialState,
   reducers: {
     logout(state) {
-      state.user = null
+      state.profile = null
       state.token = ''
+      state.phone = ''
+      state.email = ''
       localStorage.removeItem('token')
     },
 
     reset(state) {
       state.error = ''
       state.phone = ''
+      state.email = ''
       state.status = STATUS.IDLE
     },
   },
   extraReducers: (builder) => {
-    // login by phone
+    // ===== PHONE =====
     builder
       .addCase(loginByPhone.pending, (state) => {
         state.status = STATUS.LOADING
@@ -85,7 +139,6 @@ export const authSlice = createSlice({
         state.error = `${payload}`
       })
 
-    //  verify otp by phone
     builder
       .addCase(verifyOtpByPhone.pending, (state) => {
         state.status = STATUS.LOADING
@@ -99,9 +152,73 @@ export const authSlice = createSlice({
       .addCase(verifyOtpByPhone.rejected, (state, { payload }) => {
         state.status = STATUS.FAILED
         state.error = `${payload}`
+        toast.error(`${payload}`)
       })
 
-    // get profile
+    builder
+      .addCase(resendOtpByPhone.pending, (state) => {
+        state.status = STATUS.LOADING
+        state.error = null
+      })
+      .addCase(resendOtpByPhone.fulfilled, (state, { payload }) => {
+        state.status = STATUS.LOADED
+        state.accessCodeId = payload.accessCodeId
+      })
+      .addCase(resendOtpByPhone.rejected, (state, { payload }) => {
+        state.status = STATUS.FAILED
+        state.error = `${payload}`
+        toast.error(`${payload}`)
+      })
+
+    // ===== EMAIL =====
+    builder
+      .addCase(loginByEmail.pending, (state) => {
+        state.status = STATUS.LOADING
+        state.error = null
+      })
+      .addCase(loginByEmail.fulfilled, (state, { payload }) => {
+        state.status = STATUS.LOGGED_IN
+        state.email = payload.email
+        state.accessCodeId = payload.accessCodeId
+      })
+      .addCase(loginByEmail.rejected, (state, { payload }) => {
+        state.status = STATUS.FAILED
+        state.error = `${payload}`
+        toast.error(`${payload}`)
+      })
+
+    builder
+      .addCase(verifyOtpByEmail.pending, (state) => {
+        state.status = STATUS.LOADING
+        state.error = null
+      })
+      .addCase(verifyOtpByEmail.fulfilled, (state, { payload }) => {
+        state.status = STATUS.VERIFIED
+        state.token = payload.token
+        state.profile = payload.user
+      })
+      .addCase(verifyOtpByEmail.rejected, (state, { payload }) => {
+        state.status = STATUS.FAILED
+        state.error = `${payload}`
+        toast.error(`${payload}`)
+      })
+
+    builder
+      .addCase(resendOtpByEmail.pending, (state) => {
+        state.status = STATUS.LOADING
+        state.error = null
+      })
+      .addCase(resendOtpByEmail.fulfilled, (state, { payload }) => {
+        state.status = STATUS.LOADED
+        state.accessCodeId = payload.accessCodeId
+      })
+      .addCase(resendOtpByEmail.rejected, (state, { payload }) => {
+        state.status = STATUS.FAILED
+        state.error = `${payload}`
+        toast.error(`${payload}`)
+      })
+
+    // ===== ME =====
     builder
       .addCase(getMe.pending, (state) => {
         state.status = STATUS.LOADING
@@ -116,7 +233,6 @@ export const authSlice = createSlice({
         state.error = `${payload}`
       })
 
-    // update profile
     builder
       .addCase(updateMe.pending, (state) => {
         state.status = STATUS.LOADING
@@ -129,6 +245,7 @@ export const authSlice = createSlice({
       .addCase(updateMe.rejected, (state, { payload }) => {
         state.status = STATUS.FAILED
         state.error = `${payload}`
+        toast.error(`${payload}`)
       })
   },
 })

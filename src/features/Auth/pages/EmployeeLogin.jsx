@@ -1,8 +1,90 @@
+import { STATUS } from '@/constants/common'
+import {
+  authActions,
+  loginByEmail,
+  resendOtpByEmail,
+  verifyOtpByEmail,
+} from '@/stores/slices/authSlice'
 import WorkIcon from '@mui/icons-material/Work'
-import { Box, Container, Paper, Stack, Typography } from '@mui/material'
+import { Box, Button, Container, Dialog, Paper, Stack, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { EmployeeLoginForm } from '../components/EmployeeLoginForm'
+import { VerifyForm } from '../components/VerifyForm'
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, '0')
+  const s = (seconds % 60).toString().padStart(2, '0')
+  return `${m}:${s}`
+}
 
 export function EmployeeLogin() {
+  const [showVerify, setShowVerify] = useState(false)
+  const [counter, setCounter] = useState(30)
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const status = useSelector((state) => state.auth.status)
+  const email = useSelector((state) => state.auth.email)
+  const token = useSelector((state) => state.auth.token)
+  const error = useSelector((state) => state.auth.error)
+  const profile = useSelector((state) => state.auth.profile)
+  const accessCodeId = useSelector((state) => state.auth.accessCodeId)
+
+  useEffect(() => {
+    if (counter > 0) {
+      const timer = setTimeout(() => setCounter(counter - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [counter])
+
+  useEffect(() => {
+    if (status === STATUS.LOGGED_IN) {
+      setShowVerify(true)
+    }
+
+    if (status === STATUS.VERIFIED && token) {
+      setShowVerify(false)
+      dispatch(authActions.reset())
+      localStorage.setItem('token', token)
+      navigate('/dashboard')
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, error, token, profile])
+
+  function handleClose() {
+    setShowVerify(false)
+  }
+
+  function handleLogin(formValues) {
+    dispatch(loginByEmail(formValues))
+  }
+
+  function handleVerifyOtp(formValues) {
+    if (!email) return
+    dispatch(
+      verifyOtpByEmail({
+        ...formValues,
+        email,
+        accessCodeId,
+      }),
+    )
+  }
+
+  function handleResend() {
+    dispatch(resendOtpByEmail({ email, accessCodeId }))
+    setCounter(30)
+  }
+
+  if (token) {
+    return <Navigate to="/dashboard" />
+  }
+
   return (
     <Container maxWidth="sm">
       <Stack justifyContent="center" alignItems="center" spacing={4} minHeight="100vh">
@@ -16,10 +98,46 @@ export function EmployeeLogin() {
           </Box>
 
           <Box width="100%">
-            <EmployeeLoginForm />
+            <EmployeeLoginForm loading={status === STATUS.LOADING} onSubmit={handleLogin} />
           </Box>
         </Paper>
       </Stack>
+
+      <Dialog fullWidth maxWidth="sm" open={showVerify} onClose={handleClose}>
+        <Stack spacing={4} sx={{ p: 3 }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h5" fontWeight={600}>
+              Verify OTP
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Enter the 6-digit code sent to your email
+            </Typography>
+          </Box>
+
+          <Box width="100%">
+            <VerifyForm loading={status === STATUS.LOADING} onSubmit={handleVerifyOtp} />
+
+            <Stack mt={3} direction="row" justifyContent="space-between" alignItems="center">
+              <Typography variant="body2" color="text.secondary" fontWeight={600}>
+                {counter > 0
+                  ? `Resend available in ${formatTime(counter)}`
+                  : "Didn't receive the code?"}
+              </Typography>
+
+              <Button
+                onClick={handleResend}
+                disabled={counter > 0 || status === STATUS.LOADING}
+                loading={status === STATUS.LOADING}
+                size="small"
+                variant="text"
+                sx={{ fontWeight: 600 }}
+              >
+                Resend Code
+              </Button>
+            </Stack>
+          </Box>
+        </Stack>
+      </Dialog>
     </Container>
   )
 }

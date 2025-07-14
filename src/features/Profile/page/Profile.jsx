@@ -37,6 +37,7 @@ export default function ProfilePage() {
   }, [status])
 
   const handleSubmit = (formData) => {
+    console.log('click')
     dispatch(updateMe(formData))
   }
 

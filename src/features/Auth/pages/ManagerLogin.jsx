@@ -1,17 +1,29 @@
 import { STATUS } from '@/constants/common'
-import { authActions, loginByPhone, verifyOtpByPhone } from '@/stores/slices/authSlice'
+import {
+  authActions,
+  loginByPhone,
+  resendOtpByPhone,
+  verifyOtpByPhone,
+} from '@/stores/slices/authSlice'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { Alert, Box, Button, Container, Dialog, Paper, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import { ManagerLoginForm } from '../components/ManagerLoginForm'
 import { VerifyForm } from '../components/VerifyForm'
 
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, '0')
+  const s = (seconds % 60).toString().padStart(2, '0')
+  return `${m}:${s}`
+}
+
 export function ManagerLogin() {
   const [showVerify, setShowVerify] = useState(false)
-  const [counter, setCounter] = useState(120)
+  const [counter, setCounter] = useState(30)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -42,14 +54,15 @@ export function ManagerLogin() {
       navigate('/dashboard')
     }
 
-    if (status === STATUS.FAILED) {
-      toast.error(error)
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, error, token, profile])
 
-  function handleResend() {
-    setCounter(120)
+  function handleClose() {
+    setShowVerify(false)
+  }
+
+  function handleLogin(formValues) {
+    dispatch(loginByPhone(formValues))
   }
 
   function handleVerifyOtp(formValues) {
@@ -63,20 +76,9 @@ export function ManagerLogin() {
     )
   }
 
-  function formatTime(seconds) {
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, '0')
-    const s = (seconds % 60).toString().padStart(2, '0')
-    return `${m}:${s}`
-  }
-
-  function handleSubmit(formValues) {
-    dispatch(loginByPhone(formValues))
-  }
-
-  function handleClose() {
-    setShowVerify(false)
+  function handleResend() {
+    dispatch(resendOtpByPhone({ phone, accessCodeId }))
+    setCounter(30)
   }
 
   if (token) {
@@ -105,7 +107,7 @@ export function ManagerLogin() {
           </Box>
 
           <Box width="100%">
-            <ManagerLoginForm loading={status === STATUS.LOADING} onSubmit={handleSubmit} />
+            <ManagerLoginForm loading={status === STATUS.LOADING} onSubmit={handleLogin} />
           </Box>
         </Paper>
       </Stack>

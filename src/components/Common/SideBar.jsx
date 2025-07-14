@@ -10,35 +10,8 @@ import {
   ListItem,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
-import GroupIcon from '@mui/icons-material/Group'
-import AssignmentIcon from '@mui/icons-material/Assignment'
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble'
 
-const sidebarItems = [
-  {
-    id: 'tasks',
-    label: 'Tasks',
-    icon: <AssignmentIcon />,
-    path: '/dashboard/tasks',
-    hasPermission: true,
-  },
-  {
-    id: 'employees',
-    label: 'Employees',
-    icon: <GroupIcon />,
-    path: '/dashboard/employees',
-    hasPermission: true,
-  },
-  {
-    id: 'messages',
-    label: 'Messages',
-    icon: <ChatBubbleIcon />,
-    path: '/dashboard/messages',
-    hasPermission: true,
-  },
-]
-
-export default function Sidebar({ pathname, sidebarWidth = 250 }) {
+export default function Sidebar({ navList, pathname, sidebarWidth = 250 }) {
   return (
     <Box
       boxShadow={1}
@@ -70,8 +43,8 @@ export default function Sidebar({ pathname, sidebarWidth = 250 }) {
       </List>
 
       <List>
-        {sidebarItems
-          .filter((item) => item.hasPermission)
+        {navList
+          .filter((i) => i.hasPermission)
           .map((item) => {
             const isActive = pathname.startsWith(item.path)
             return (
