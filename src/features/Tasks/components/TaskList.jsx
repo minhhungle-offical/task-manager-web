@@ -1,8 +1,9 @@
 import { Delete, Edit } from '@mui/icons-material'
 import { Box, Chip, Tooltip, alpha } from '@mui/material'
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid'
+import dayjs from 'dayjs'
 
-export function EmployeeList({
+export function TaskList({
   params = { page: 1, limit: 5 },
   data,
   total = 0,
@@ -33,48 +34,25 @@ export function EmployeeList({
       ...baseColProps,
     },
     {
-      field: 'name',
-      headerName: 'Name',
+      field: 'title',
+      headerName: 'Title',
       flex: 1,
       ...baseColProps,
     },
     {
-      field: 'email',
-      headerName: 'Email',
+      field: 'employeeName',
+      headerName: 'Employee Name',
       flex: 1,
       ...baseColProps,
     },
     {
-      field: 'phone',
-      headerName: 'Phone',
+      field: 'dueDate',
+      headerName: 'Due Date',
       flex: 1,
       ...baseColProps,
-    },
-
-    {
-      field: 'role',
-      headerName: 'Role',
-      width: 150,
-      align: 'center',
-      headerAlign: 'center',
-      ...baseColProps,
-      renderCell: ({ row }) => (
-        <Chip
-          size="small"
-          label={row.role || 'unknown'}
-          sx={{
-            fontWeight: 500,
-            borderRadius: '4px',
-            color: (theme) =>
-              row.role === 'manager' ? theme.palette.success.main : theme.palette.warning.main,
-            bgcolor: (theme) =>
-              alpha(
-                row.role === 'manager' ? theme.palette.success.main : theme.palette.warning.main,
-                0.1,
-              ),
-          }}
-        />
-      ),
+      valueGetter(params) {
+        return dayjs(new Date(params * 1000)).format('DD/MM/YYYY')
+      },
     },
     {
       field: 'isActive',
@@ -86,13 +64,12 @@ export function EmployeeList({
       renderCell: ({ row }) => (
         <Chip
           size="small"
-          label={row.isActive ? 'Publish' : 'Draft'}
+          label={row.status}
           sx={{
             fontWeight: 500,
-            color: (theme) =>
-              row.isActive ? theme.palette.success.main : theme.palette.error.main,
-            bgcolor: (theme) =>
-              alpha(row.isActive ? theme.palette.success.main : theme.palette.error.main, 0.1),
+            color: (theme) => theme.palette.warning.main,
+
+            bgcolor: (theme) => alpha(theme.palette.warning.main, 0.1),
           }}
         />
       ),
@@ -167,7 +144,6 @@ export function EmployeeList({
         columns={columns}
         disableRowSelectionOnClick
         pagination
-        autoHeight={false}
         paginationMode="server"
         rowCount={total || 0}
         paginationModel={{

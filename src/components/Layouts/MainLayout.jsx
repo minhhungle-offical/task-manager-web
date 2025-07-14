@@ -1,4 +1,4 @@
-import { getMe } from '@/stores/slices/authSlice'
+import { authActions, getMe } from '@/stores/slices/authSlice'
 import { Box, LinearProgress, Stack } from '@mui/material'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,6 +6,7 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { Header } from '../Common/Header'
 import Sidebar from '../Common/SideBar'
 import { STATUS } from '@/constants/common'
+import { employeeGetActive } from '@/stores/slices/employeeSlice'
 
 const sidebarWidth = 250
 
@@ -17,14 +18,18 @@ export function MainLayout({ children }) {
   const status = useSelector((state) => state.auth.status)
 
   useEffect(() => {
-    if (!profile) {
-      dispatch(getMe())
-    }
+    dispatch(employeeGetActive())
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile])
+  }, [])
+
+  useEffect(() => {
+    dispatch(getMe())
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (!token) {
-    return <Navigate to="/auth/login" />
+    return <Navigate to="/welcome" />
   }
 
   if (status === STATUS.LOADING) {
@@ -38,7 +43,7 @@ export function MainLayout({ children }) {
       </Box>
       <Box sx={{ width: `calc(100% - ${sidebarWidth}px)` }}>
         <Stack sx={{ overflow: 'auto', height: '100vh' }}>
-          <Header profile={profile} />
+          <Header profile={profile} logout={() => dispatch(authActions.logout())} />
           <Box flexGrow={1}>{children}</Box>
         </Stack>
       </Box>

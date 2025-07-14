@@ -1,3 +1,11 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import socket from '@/utils/socket'
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import LogoutIcon from '@mui/icons-material/Logout'
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import { Avatar } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
@@ -5,14 +13,7 @@ import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Toolbar from '@mui/material/Toolbar'
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-
-import AccountCircle from '@mui/icons-material/AccountCircle'
-import LogoutIcon from '@mui/icons-material/Logout'
-import NotificationsIcon from '@mui/icons-material/Notifications'
-import SettingsIcon from '@mui/icons-material/Settings'
-import { Avatar } from '@mui/material'
+import audio from '@/assets/audios/audio.mp3'
 
 const settingList = [
   {
@@ -27,10 +28,13 @@ const settingList = [
   },
 ]
 
-export function Header({ profile }) {
+export function Header({ profile, logout }) {
   const navigate = useNavigate()
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [unreadCount, setUnreadCount] = useState(0)
+
   const isMenuOpen = Boolean(anchorEl)
+  const notificationSound = new Audio(audio)
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget)
@@ -40,10 +44,29 @@ export function Header({ profile }) {
     setAnchorEl(null)
   }
 
-  const handleMenuItemClick = (pathname) => {
+  const handleSettingClick = (pathname) => {
     handleMenuClose()
     navigate(pathname)
   }
+
+  useEffect(() => {
+    if (!socket || !profile?.id) return
+
+    socket.emit('joinRoom', profile.id)
+
+    const handleTaskAssigned = () => {
+      notificationSound.currentTime = 0
+      notificationSound.play()
+      setUnreadCount((prev) => prev + 1)
+    }
+
+    socket.on('task-assigned', handleTaskAssigned)
+
+    return () => {
+      socket.off('task-assigned', handleTaskAssigned)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id])
 
   const menuId = 'primary-search-account-menu'
   const renderMenu = (
@@ -57,7 +80,17 @@ export function Header({ profile }) {
       onClose={handleMenuClose}
     >
       {settingList.map(({ icon, label, pathname }) => (
-        <MenuItem key={label} onClick={() => handleMenuItemClick(pathname)}>
+        <MenuItem
+          key={label}
+          onClick={() => {
+            if (pathname === '/profile') {
+              handleSettingClick(pathname)
+              return
+            }
+
+            logout?.()
+          }}
+        >
           {icon}
           <Box ml={1}>{label}</Box>
         </MenuItem>
@@ -71,8 +104,13 @@ export function Header({ profile }) {
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />
 
-          <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-            <Badge badgeContent={17} color="error">
+          <IconButton
+            size="large"
+            aria-label="notifications"
+            color="inherit"
+            onClick={() => setUnreadCount(0)}
+          >
+            <Badge badgeContent={unreadCount} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
@@ -80,13 +118,13 @@ export function Header({ profile }) {
           <IconButton
             size="large"
             edge="end"
-            aria-label="account of current user"
+            aria-label="account"
             aria-controls={menuId}
             aria-haspopup="true"
             onClick={handleProfileMenuOpen}
             color="inherit"
           >
-            {profile && profile.avatarUrl ? (
+            {profile?.avatarUrl ? (
               <Avatar alt={profile.name} src={profile.avatarUrl} sx={{ width: 32, height: 32 }} />
             ) : (
               <AccountCircle />

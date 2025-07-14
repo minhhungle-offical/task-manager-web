@@ -40,7 +40,11 @@ export default function ProfilePage() {
     dispatch(updateMe(formData))
   }
 
-  if (status === STATUS.LOADING) {
+  if (!token) {
+    return <Navigate to="/welcome" />
+  }
+
+  if (!profile) {
     return <LinearProgress />
   }
 

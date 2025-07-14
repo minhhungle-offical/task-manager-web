@@ -19,6 +19,7 @@ import { AddEditEmployeeForm } from '../components/AddEditEmployeeForm'
 import {
   employeeActions,
   employeeCreate,
+  employeeGetActive,
   employeeGetAll,
   employeeRemove,
   employeeUpdate,
@@ -56,6 +57,7 @@ export default function Employees() {
   useEffect(() => {
     if (status === STATUS.CREATED || status === STATUS.UPDATED || status === STATUS.REMOVED) {
       fetchData(filter)
+      dispatch(employeeGetActive())
       handleClose()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,7 +111,7 @@ export default function Employees() {
       >
         <Box sx={{ p: 3 }}>
           <Typography variant="h5" fontWeight={600}>
-            Employees
+            Employees management
           </Typography>
         </Box>
 
@@ -151,25 +153,19 @@ export default function Employees() {
         </DialogContent>
 
         <DialogActions>
-          <Stack direction="row" spacing={2} sx={{ p: 2 }}>
-            <Box>
-              <Button
-                loading={loading}
-                disabled={loading}
-                variant="contained"
-                color="success"
-                onClick={() => formRef?.current?.submit()}
-              >
-                {selectedItem ? 'Save' : 'Create '}
-              </Button>
-            </Box>
+          <Button
+            loading={loading}
+            disabled={loading}
+            variant="contained"
+            color="success"
+            onClick={() => formRef?.current?.submit()}
+          >
+            {selectedItem ? 'Save' : 'Create '}
+          </Button>
 
-            <Box>
-              <Button loading={loading} disabled={loading} variant="outlined" onClick={handleClose}>
-                Cancel
-              </Button>
-            </Box>
-          </Stack>
+          <Button loading={loading} disabled={loading} variant="outlined" onClick={handleClose}>
+            Cancel
+          </Button>
         </DialogActions>
       </Dialog>
 

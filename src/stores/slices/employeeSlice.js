@@ -17,6 +17,17 @@ export const employeeGetAll = createAsyncThunk(
   },
 )
 
+export const employeeGetActive = createAsyncThunk(
+  `${name}/getActive`,
+  async (_, { rejectWithValue }) => {
+    try {
+      return await api.getActive()
+    } catch (err) {
+      return rejectWithValue(err)
+    }
+  },
+)
+
 export const employeeCreate = createAsyncThunk(
   `${name}/create`,
   async (body, { rejectWithValue }) => {
@@ -54,6 +65,7 @@ export const employeeRemove = createAsyncThunk(
 const initialState = {
   data: [],
   item: {},
+  activeData: [],
   status: STATUS.IDLE,
   error: '',
   filter: {
@@ -83,8 +95,8 @@ export const employeeSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Get All
     builder
-      // Get All
       .addCase(employeeGetAll.pending, (state) => {
         state.status = STATUS.LOADING
       })
@@ -94,6 +106,20 @@ export const employeeSlice = createSlice({
         state.pagination = payload.pagination
       })
       .addCase(employeeGetAll.rejected, (state, { payload }) => {
+        state.status = STATUS.FAILED
+        state.error = `${payload}`
+      })
+
+    // Get active
+    builder
+      .addCase(employeeGetActive.pending, (state) => {
+        state.status = STATUS.LOADING
+      })
+      .addCase(employeeGetActive.fulfilled, (state, { payload }) => {
+        state.status = STATUS.LOADED
+        state.activeData = payload
+      })
+      .addCase(employeeGetActive.rejected, (state, { payload }) => {
         state.status = STATUS.FAILED
         state.error = `${payload}`
       })

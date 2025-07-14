@@ -1,16 +1,13 @@
 import axiosClient from './axiosClient'
 
-const url = '/employees'
+const url = '/tasks'
 
-export const employeeApi = {
+export const tasksApi = {
   getAll(params) {
     return axiosClient.get(url, { params })
   },
   getById(id) {
     return axiosClient.get(`${url}/${id}`)
-  },
-  getActive() {
-    return axiosClient.get(`${url}/active`)
   },
   create(body) {
     return axiosClient.post(url, body)

@@ -39,11 +39,7 @@ export function ManagerLogin() {
       dispatch(authActions.reset())
       localStorage.setItem('token', token)
 
-      if (profile?.name) {
-        navigate('/dashboard')
-      } else {
-        navigate('/profile')
-      }
+      navigate('/dashboard')
     }
 
     if (status === STATUS.FAILED) {
