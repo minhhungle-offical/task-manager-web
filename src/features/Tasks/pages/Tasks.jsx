@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  Stack,
   Typography,
 } from '@mui/material'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -21,6 +22,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AddEditTaskForm } from '../components/AddEditTaskForm'
 import { TaskFilter } from '../components/TaskFilter'
 import { TaskList } from '../components/TaskList'
+import AddIcon from '@mui/icons-material/Add'
 
 export default function Tasks() {
   const [selectedItem, setSelectedItem] = useState(null)
@@ -101,9 +103,23 @@ export default function Tasks() {
         }}
       >
         <Box sx={{ p: 3 }}>
-          <Typography variant="h5" fontWeight={600}>
-            Task management
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography variant="h5" fontWeight={600}>
+              Task management
+            </Typography>
+
+            <Box>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => handleAddNew?.()}
+                loading={loading === STATUS.LOADING}
+                disabled={loading === STATUS.LOADING}
+              >
+                Add new
+              </Button>
+            </Box>
+          </Stack>
         </Box>
 
         <Divider />

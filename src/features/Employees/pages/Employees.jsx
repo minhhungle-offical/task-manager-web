@@ -24,6 +24,7 @@ import {
   employeeRemove,
   employeeUpdate,
 } from '@/stores/slices/employeeSlice'
+import AddIcon from '@mui/icons-material/Add'
 
 export default function Employees() {
   const [selectedItem, setSelectedItem] = useState(null)
@@ -110,9 +111,23 @@ export default function Employees() {
         }}
       >
         <Box sx={{ p: 3 }}>
-          <Typography variant="h5" fontWeight={600}>
-            Employees management
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography variant="h5" fontWeight={600}>
+              Employees management
+            </Typography>
+
+            <Box>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => handleAddNew?.()}
+                loading={loading === STATUS.LOADING}
+                disabled={loading === STATUS.LOADING}
+              >
+                Add new
+              </Button>
+            </Box>
+          </Stack>
         </Box>
 
         <Divider />

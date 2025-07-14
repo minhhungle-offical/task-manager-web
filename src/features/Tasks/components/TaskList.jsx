@@ -51,7 +51,7 @@ export function TaskList({
       flex: 1,
       ...baseColProps,
       valueGetter(params) {
-        return dayjs(new Date(params * 1000)).format('DD/MM/YYYY')
+        return dayjs(params).format('DD/MM/YYYY')
       },
     },
     {
@@ -68,7 +68,6 @@ export function TaskList({
           sx={{
             fontWeight: 500,
             color: (theme) => theme.palette.warning.main,
-
             bgcolor: (theme) => alpha(theme.palette.warning.main, 0.1),
           }}
         />

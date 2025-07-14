@@ -21,7 +21,7 @@ export const AddEditTaskForm = forwardRef(({ loading = false, data, onSubmit, us
       title: data?.title || '',
       description: data?.description || '',
       assignedTo: data?.assignedTo || '',
-      dueDate: dayjs(),
+      dueDate: data?.dueDate ? dayjs(data.dueDate.toDate()) : dayjs(),
     },
     resolver: zodResolver(schema),
   })

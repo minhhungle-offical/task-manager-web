@@ -3,7 +3,7 @@ import { SortField } from '@/components/FormFields/SortField'
 import AddIcon from '@mui/icons-material/Add'
 import { Box, Button, Stack, Typography } from '@mui/material'
 
-export function EmployeeFilter({ loading, total, onAddNew, filter, onFilterChange }) {
+export function EmployeeFilter({ total, filter, onFilterChange }) {
   function handleSearchName(value) {
     const newFilter = {
       ...filter,
@@ -32,20 +32,6 @@ export function EmployeeFilter({ loading, total, onAddNew, filter, onFilterChang
     <Stack direction="row" alignItems="center" spacing={1.5}>
       <Box flexGrow={1}>
         <Typography fontWeight={600}>{total < 10 ? `0${total}` : total} items</Typography>
-      </Box>
-
-      <Box>
-        <Button
-          variant="outlined"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => onAddNew?.()}
-          loading={loading}
-          disabled={loading}
-          sx={{ height: 40 }}
-        >
-          Add new
-        </Button>
       </Box>
 
       <Box>
