@@ -81,6 +81,8 @@ export function ManagerLogin() {
     return <Navigate to="/dashboard" />
   }
 
+  console.log('count', counter)
+
   return (
     <Container maxWidth="sm">
       <Stack justifyContent="center" alignItems="center" spacing={4} minHeight="100vh">
