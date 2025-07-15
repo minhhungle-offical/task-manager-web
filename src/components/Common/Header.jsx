@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import socket from '@/utils/socket'
+import audio from '@/assets/audios/audio.mp3'
+import { notificationActions } from '@/stores/slices/notificationSlice'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import LogoutIcon from '@mui/icons-material/Logout'
 import NotificationsIcon from '@mui/icons-material/Notifications'
@@ -12,9 +11,9 @@ import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Toolbar from '@mui/material/Toolbar'
-import audio from '@/assets/audios/audio.mp3'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { notificationActions } from '@/stores/slices/notificationSlice'
+import { useNavigate } from 'react-router-dom'
 
 const settingList = [
   {
@@ -52,27 +51,27 @@ export function Header({ profile, logout }) {
     navigate(pathname)
   }
 
-  useEffect(() => {
-    if (!socket || !profile?.id) return
+  // useEffect(() => {
+  //   if (!socket || !profile?.id) return
 
-    socket.emit('joinRoom', profile.id)
+  //   socket.emit('joinRoom', profile.id)
 
-    const handleTaskAssigned = (data) => {
-      console.log(data.type)
-      if (data?.type === 'task') {
-        dispatch(notificationActions.incrementTask())
-      }
-      notificationSound.currentTime = 0
-      notificationSound.play()
-    }
+  //   const handleTaskAssigned = (data) => {
+  //     console.log(data.type)
+  //     if (data?.type === 'task') {
+  //       dispatch(notificationActions.incrementTask())
+  //     }
+  //     notificationSound.currentTime = 0
+  //     notificationSound.play()
+  //   }
 
-    socket.on('task-assigned', handleTaskAssigned)
+  //   socket.on('task-assigned', handleTaskAssigned)
 
-    return () => {
-      socket.off('task-assigned', handleTaskAssigned)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.id])
+  //   return () => {
+  //     socket.off('task-assigned', handleTaskAssigned)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [profile?.id])
 
   const menuId = 'primary-search-account-menu'
   const renderMenu = (
@@ -111,7 +110,15 @@ export function Header({ profile, logout }) {
           <Button onClick={() => notificationSound.play()}>Click</Button>
           <Box sx={{ flexGrow: 1 }} />
 
-          <IconButton size="large" aria-label="notifications" color="inherit">
+          <IconButton
+            size="large"
+            aria-label="notifications"
+            color="inherit"
+            onClick={() => {
+              dispatch(notificationActions.resetMessage())
+              dispatch(notificationActions.resetTask())
+            }}
+          >
             <Badge badgeContent={count} color="error">
               <NotificationsIcon />
             </Badge>

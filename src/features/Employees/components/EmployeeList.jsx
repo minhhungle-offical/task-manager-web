@@ -3,10 +3,10 @@ import { Box, Chip, Tooltip, alpha } from '@mui/material'
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid'
 
 export function EmployeeList({
-  params = { page: 1, limit: 5 },
-  data,
+  data = [],
   total = 0,
   loading,
+  params = { page: 1, limit: 5 },
   onPaginationModelChange,
   onEdit,
   onRemove,
@@ -18,8 +18,8 @@ export function EmployeeList({
     headerClassName: 'header',
   }
 
-  const rows = data?.map((item, idx) => ({
-    key: (params.page - 1) * params.limit + idx + 1,
+  const rows = data.map((item, index) => ({
+    key: (params.page - 1) * params.limit + index + 1,
     ...item,
   }))
 
@@ -28,8 +28,8 @@ export function EmployeeList({
       field: 'key',
       headerName: '#',
       width: 60,
-      headerAlign: 'center',
       align: 'center',
+      headerAlign: 'center',
       ...baseColProps,
     },
     {
@@ -50,64 +50,61 @@ export function EmployeeList({
       flex: 1,
       ...baseColProps,
     },
-
     {
       field: 'role',
       headerName: 'Role',
-      width: 150,
+      width: 130,
       align: 'center',
       headerAlign: 'center',
       ...baseColProps,
-      renderCell: ({ row }) => (
-        <Chip
-          size="small"
-          label={row.role || 'unknown'}
-          sx={{
-            fontWeight: 500,
-            borderRadius: '4px',
-            color: (theme) =>
-              row.role === 'manager' ? theme.palette.success.main : theme.palette.warning.main,
-            bgcolor: (theme) =>
-              alpha(
-                row.role === 'manager' ? theme.palette.success.main : theme.palette.warning.main,
-                0.1,
-              ),
-          }}
-        />
-      ),
+      renderCell: ({ row }) => {
+        return (
+          <Chip
+            size="small"
+            label={row.role || 'unknown'}
+            sx={{
+              fontWeight: 500,
+              color: (theme) => theme.palette.warning.main,
+              bgcolor: (theme) => alpha(theme.palette.warning.main, 0.1),
+            }}
+          />
+        )
+      },
     },
     {
       field: 'isActive',
       headerName: 'Status',
-      width: 150,
+      width: 130,
       align: 'center',
       headerAlign: 'center',
       ...baseColProps,
-      renderCell: ({ row }) => (
-        <Chip
-          size="small"
-          label={row.isActive ? 'Publish' : 'Draft'}
-          sx={{
-            fontWeight: 500,
-            color: (theme) =>
-              row.isActive ? theme.palette.success.main : theme.palette.error.main,
-            bgcolor: (theme) =>
-              alpha(row.isActive ? theme.palette.success.main : theme.palette.error.main, 0.1),
-          }}
-        />
-      ),
+      renderCell: ({ row }) => {
+        const active = !!row.isActive
+        const color = (theme) => (active ? theme.palette.success.main : theme.palette.error.main)
+        return (
+          <Chip
+            size="small"
+            label={active ? 'Active' : 'Inactive'}
+            sx={{
+              fontWeight: 500,
+              color,
+              bgcolor: (theme) => alpha(color(theme), 0.1),
+            }}
+          />
+        )
+      },
     },
-
     {
       field: 'actions',
-      headerName: 'Actions',
       type: 'actions',
+      headerName: 'Actions',
       width: 100,
       align: 'center',
       headerAlign: 'center',
       ...baseColProps,
       getActions: ({ row }) => [
         <GridActionsCellItem
+          key="edit"
           icon={
             <Tooltip title="Edit">
               <Edit color="primary" />
@@ -117,6 +114,7 @@ export function EmployeeList({
           onClick={() => onEdit?.(row)}
         />,
         <GridActionsCellItem
+          key="delete"
           icon={
             <Tooltip title="Delete">
               <Delete color="error" />
@@ -129,13 +127,12 @@ export function EmployeeList({
     },
   ]
 
-  const handlePaginationModelChange = (model) => {
-    const newParams = {
+  const handlePageChange = (model) => {
+    onPaginationModelChange?.({
       ...params,
       page: model.page + 1,
       limit: model.pageSize,
-    }
-    onPaginationModelChange?.(newParams)
+    })
   }
 
   return (
@@ -152,31 +149,28 @@ export function EmployeeList({
         '.MuiDataGrid-columnHeaders': {
           borderBottom: '2px solid #ccc',
         },
-        '.MuiDataGrid-cell': {
-          px: 2,
-        },
-        '.MuiDataGrid-columnHeader': {
+        '.MuiDataGrid-cell, .MuiDataGrid-columnHeader': {
           px: 2,
         },
       }}
     >
       <DataGrid
         loading={loading}
-        rows={rows || []}
+        rows={rows}
         getRowId={(row) => row.id}
         columns={columns}
         disableRowSelectionOnClick
         pagination
-        autoHeight={false}
         paginationMode="server"
-        rowCount={total || 0}
+        rowCount={total}
         paginationModel={{
-          page: params?.page - 1 || 0,
-          pageSize: params?.limit || 10,
+          page: params.page - 1,
+          pageSize: params.limit,
         }}
-        onPaginationModelChange={handlePaginationModelChange}
+        onPaginationModelChange={handlePageChange}
         pageSizeOptions={[5, 10, 25, 50]}
         disableColumnSelector
+        autoHeight={false}
       />
     </Box>
   )

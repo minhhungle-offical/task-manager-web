@@ -1,5 +1,5 @@
-import { Box, TextField, Typography } from "@mui/material";
-import { useController } from "react-hook-form";
+import { Box, TextField, Typography } from '@mui/material'
+import { useController } from 'react-hook-form'
 
 export function InputField({
   multiline,
@@ -20,25 +20,20 @@ export function InputField({
   } = useController({
     name,
     control,
-  });
+  })
 
   const handleChange = (e) => {
-    onChange(e);
-    onFieldChange?.(e);
-  };
+    onChange(e)
+    onFieldChange?.(e)
+  }
 
   return (
     <Box>
       {label && (
-        <Typography
-          variant="caption"
-          fontWeight={600}
-          color="textSecondary"
-          gutterBottom
-        >
-          {label}{" "}
+        <Typography variant="body2" fontWeight={600} color="textSecondary" gutterBottom>
+          {label}{' '}
           {required && (
-            <Box component="span" sx={{ color: "error.main" }}>
+            <Box component="span" sx={{ color: 'error.main' }}>
               *
             </Box>
           )}
@@ -52,7 +47,7 @@ export function InputField({
         rows={rows}
         fullWidth
         name={name}
-        value={value ?? ""}
+        value={value ?? ''}
         onChange={handleChange}
         onBlur={onBlur}
         inputRef={ref}
@@ -62,5 +57,5 @@ export function InputField({
         {...props}
       />
     </Box>
-  );
+  )
 }

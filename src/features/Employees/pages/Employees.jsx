@@ -79,6 +79,7 @@ export default function Employees() {
   }
 
   function handleSubmit(formValues) {
+    console.log('formValues: ', formValues)
     if (selectedItem) {
       dispatch(
         employeeUpdate({

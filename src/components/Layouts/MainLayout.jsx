@@ -10,6 +10,10 @@ import { employeeGetActive } from '@/stores/slices/employeeSlice'
 import GroupIcon from '@mui/icons-material/Group'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble'
+import { notificationActions } from '@/stores/slices/notificationSlice'
+import socket from '@/utils/socket'
+import { taskGetAll } from '@/stores/slices/taskSlice'
+import { toast } from 'react-toastify'
 
 const sidebarWidth = 250
 
@@ -24,9 +28,10 @@ const hasPermission = (roleList, role) => {
 export function MainLayout({ children }) {
   const { pathname } = useLocation()
   const dispatch = useDispatch()
-  const token = useSelector((state) => state.auth.token)
-  const profile = useSelector((state) => state.auth.profile)
-  const status = useSelector((state) => state.auth.status)
+
+  const { status, profile, token } = useSelector((state) => state.auth)
+  const { filter } = useSelector((state) => state.task)
+  // const { data: messageList } = useSelector((state) => state.message)
 
   const navList = [
     {
@@ -62,6 +67,26 @@ export function MainLayout({ children }) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (!socket || !profile?.id) return
+
+    socket.emit('joinRoom', profile.id)
+
+    const handleTaskAssigned = (msg) => {
+      console.log('msg: ', msg)
+      dispatch(notificationActions.incrementTask())
+      dispatch(taskGetAll(filter))
+      toast.warning('Something had changed')
+    }
+
+    socket.on('task-assigned', handleTaskAssigned)
+
+    return () => {
+      socket.off('task-assigned', handleTaskAssigned)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id])
 
   if (!token) {
     return <Navigate to="/welcome" />

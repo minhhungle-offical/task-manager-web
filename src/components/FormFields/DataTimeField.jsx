@@ -22,7 +22,7 @@ export function DateTimeField({ label, control, name, mode = 'date', ...props })
   return (
     <Box>
       {label && (
-        <Typography variant="caption" fontWeight={600} color="textSecondary">
+        <Typography variant="body2" fontWeight={600} color="textSecondary">
           {label}
         </Typography>
       )}

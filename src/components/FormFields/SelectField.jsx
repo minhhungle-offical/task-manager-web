@@ -13,7 +13,7 @@ export function SelectField({ label, control, name, options = [], placeholder = 
   return (
     <Box>
       {label && (
-        <Typography variant="caption" fontWeight={600} color="textSecondary">
+        <Typography variant="body2" fontWeight={600} color="textSecondary">
           {label}
         </Typography>
       )}

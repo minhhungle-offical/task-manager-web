@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import { ConversationList } from '../components/ConversationList'
 import { taskGetAll } from '@/stores/slices/taskSlice'
 import { messageAction, messageGetAll } from '@/stores/slices/messageSlice'
+import { notificationActions } from '@/stores/slices/notificationSlice'
 
 export default function Messages() {
   const { profile } = useSelector((state) => state.auth)
@@ -67,6 +68,10 @@ export default function Messages() {
   useEffect(() => {
     const handleNewMessage = (msg) => {
       dispatch(messageAction.setData([...messageList, msg]))
+
+      if (msg?.createdBy !== profile?.id) {
+        dispatch(notificationActions.incrementMessage())
+      }
     }
 
     socket.on('newMessage', handleNewMessage)
@@ -122,19 +127,20 @@ export default function Messages() {
                     justifyContent: item.createdBy === profile?.id ? 'flex-end' : 'flex-start',
                   }}
                 >
-                  <Box
-                    sx={{
-                      px: 2,
-                      py: 1,
-                      borderRadius: 2,
-                      maxWidth: '70%',
-                      bgcolor: item.createdBy === profile?.id ? 'primary.main' : 'grey.300',
-                      color: item.createdBy === profile?.id ? 'white' : 'black',
-                    }}
-                  >
-                    <Typography gutterBottom sx={{ whiteSpace: 'pre-wrap' }}>
-                      {item.content}
-                    </Typography>
+                  <Box>
+                    <Box
+                      sx={{
+                        px: 2,
+                        py: 1,
+                        borderRadius: 2,
+                        bgcolor: item.createdBy === profile?.id ? 'primary.main' : 'grey.300',
+                        color: item.createdBy === profile?.id ? 'white' : 'black',
+                      }}
+                    >
+                      <Typography gutterBottom sx={{ whiteSpace: 'pre-wrap' }}>
+                        {item.content}
+                      </Typography>
+                    </Box>
 
                     <Typography
                       variant="caption"

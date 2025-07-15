@@ -24,6 +24,7 @@ import { TaskFilter } from '../components/TaskFilter'
 import { TaskList } from '../components/TaskList'
 import AddIcon from '@mui/icons-material/Add'
 import socket from '@/utils/socket'
+import { notificationActions } from '@/stores/slices/notificationSlice'
 
 export default function Tasks() {
   const [selectedItem, setSelectedItem] = useState(null)
@@ -66,7 +67,9 @@ export default function Tasks() {
 
     socket.emit('joinRoom', profile.id)
 
-    const handleTaskAssigned = () => {
+    const handleTaskAssigned = (msg) => {
+      console.log('msg: ', msg)
+      dispatch(notificationActions.incrementTask())
       fetchData(filter)
     }
 

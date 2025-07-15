@@ -27,7 +27,6 @@ export const messageSlice = createSlice({
   initialState,
   reducers: {
     setData(state, { payload }) {
-      console.log('payload: ', payload)
       state.data = payload
     },
   },

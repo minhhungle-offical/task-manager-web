@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
+import audio from '@/assets/audios/audio.mp3'
 
 const initialState = {
   task: { count: 0, last: null },
   message: { count: 0, last: null },
   count: 0,
 }
-
+const notificationSound = new Audio(audio)
 const notificationSlice = createSlice({
   name: 'notification',
   initialState,
@@ -14,11 +15,13 @@ const notificationSlice = createSlice({
       state.task.count += 1
       state.task.last = action.payload
       state.count += 1
+      notificationSound.play()
     },
     incrementMessage: (state, action) => {
       state.message.count += 1
       state.message.last = action.payload
       state.count += 1
+      notificationSound.play()
     },
     resetTask: (state) => {
       state.count -= state.task.count
