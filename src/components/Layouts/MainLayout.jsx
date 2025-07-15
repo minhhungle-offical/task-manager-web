@@ -77,7 +77,7 @@ export function MainLayout({ children }) {
         <Sidebar pathname={pathname} profile={profile} navList={navList} />
       </Box>
       <Box sx={{ width: `calc(100% - ${sidebarWidth}px)` }}>
-        <Stack sx={{ overflow: 'auto', height: '100vh' }}>
+        <Stack sx={{ height: '100vh', overflow: 'hidden' }}>
           <Header profile={profile} logout={() => dispatch(authActions.logout())} />
           <Box flexGrow={1}>{children}</Box>
         </Stack>
