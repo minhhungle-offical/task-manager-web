@@ -1,6 +1,7 @@
 import { DateTimeField } from '@/components/FormFields/DataTimeField'
 import { InputField } from '@/components/FormFields/InputField'
 import { SelectField } from '@/components/FormFields/SelectField'
+import { ASSIGN_STATUS, ASSIGN_STATUS_OPTIONS } from '@/constants/common'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Stack } from '@mui/material'
 import dayjs from 'dayjs'
@@ -16,6 +17,7 @@ const schema = z.object({
     .any()
     .refine((val) => dayjs(val).isValid(), { message: 'Invalid date' })
     .optional(),
+  status: z.string().optional(),
 })
 
 export const AddEditTaskForm = forwardRef(
@@ -28,6 +30,7 @@ export const AddEditTaskForm = forwardRef(
         dueDate: data?.dueDate
           ? dayjs(data?.dueDate.toDate ? data?.dueDate.toDate() : data?.dueDate)
           : dayjs(),
+        status: data?.status || ASSIGN_STATUS.DRAFT,
       },
       resolver: zodResolver(schema),
     })
@@ -62,6 +65,15 @@ export const AddEditTaskForm = forwardRef(
           disabled={!canEdit || loading}
           options={userList}
         />
+
+        {data?.id && (
+          <SelectField
+            control={control}
+            label="Status"
+            name="status"
+            options={ASSIGN_STATUS_OPTIONS}
+          />
+        )}
 
         <InputField
           name="description"

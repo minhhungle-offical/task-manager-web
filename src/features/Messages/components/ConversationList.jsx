@@ -12,14 +12,16 @@ export function ConversationList({ selectedTaskId, taskList, onClick }) {
                 borderRadius: 2,
                 p: 3,
                 backgroundColor: selectedTaskId === item.id ? 'primary.main' : 'white',
-                color: selectedTaskId === item.id ? 'white' : 'grey.900',
+                color: selectedTaskId === item.id ? 'white' : 'grey.700',
                 '&:hover': {
                   backgroundColor: selectedTaskId === item.id ? 'primary.main' : 'grey.100',
                 },
               }}
               onClick={() => onClick?.(item.id)}
             >
-              <Box>{item.title}</Box>
+              <Typography variant="h6" fontWeight={600}>
+                {item.title}
+              </Typography>
 
               {item.lastMessage?.content && (
                 <Typography fontStyle="italic">

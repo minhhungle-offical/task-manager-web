@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Header } from '../Common/Header'
 import Sidebar from '../Common/SideBar'
-import { STATUS } from '@/constants/common'
+import { notificationSound, STATUS } from '@/constants/common'
 import { employeeGetActive } from '@/stores/slices/employeeSlice'
 import GroupIcon from '@mui/icons-material/Group'
 import AssignmentIcon from '@mui/icons-material/Assignment'
@@ -14,6 +14,7 @@ import { notificationActions } from '@/stores/slices/notificationSlice'
 import socket from '@/utils/socket'
 import { taskGetAll } from '@/stores/slices/taskSlice'
 import { toast } from 'react-toastify'
+import { messageAction } from '@/stores/slices/messageSlice'
 
 const sidebarWidth = 250
 
@@ -31,7 +32,7 @@ export function MainLayout({ children }) {
 
   const { status, profile, token } = useSelector((state) => state.auth)
   const { filter } = useSelector((state) => state.task)
-  // const { data: messageList } = useSelector((state) => state.message)
+  const { data: messageList } = useSelector((state) => state.message)
 
   const navList = [
     {
@@ -69,13 +70,32 @@ export function MainLayout({ children }) {
   }, [])
 
   useEffect(() => {
+    const handleNewMessage = (msg) => {
+      dispatch(messageAction.setData([...messageList, msg]))
+
+      if (msg?.createdBy !== profile?.id) {
+        dispatch(notificationActions.incrementMessage())
+        notificationSound.play()
+      }
+    }
+
+    socket.on('newMessage', handleNewMessage)
+
+    return () => {
+      socket.off('newMessage', handleNewMessage)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messageList])
+
+  useEffect(() => {
     if (!socket || !profile?.id) return
 
     socket.emit('joinRoom', profile.id)
 
-    const handleTaskAssigned = (msg) => {
-      console.log('msg: ', msg)
+    const handleTaskAssigned = () => {
       dispatch(notificationActions.incrementTask())
+      notificationSound.play()
       dispatch(taskGetAll(filter))
       toast.warning('Something had changed')
     }

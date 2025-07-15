@@ -7,7 +7,6 @@ import dayjs from 'dayjs'
 import { ConversationList } from '../components/ConversationList'
 import { taskGetAll } from '@/stores/slices/taskSlice'
 import { messageAction, messageGetAll } from '@/stores/slices/messageSlice'
-import { notificationActions } from '@/stores/slices/notificationSlice'
 
 export default function Messages() {
   const { profile } = useSelector((state) => state.auth)
@@ -64,24 +63,6 @@ export default function Messages() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTaskId])
-
-  useEffect(() => {
-    const handleNewMessage = (msg) => {
-      dispatch(messageAction.setData([...messageList, msg]))
-
-      if (msg?.createdBy !== profile?.id) {
-        dispatch(notificationActions.incrementMessage())
-      }
-    }
-
-    socket.on('newMessage', handleNewMessage)
-
-    return () => {
-      socket.off('newMessage', handleNewMessage)
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messageList])
 
   function handleSubmit(content) {
     socket.emit('createMessage', {

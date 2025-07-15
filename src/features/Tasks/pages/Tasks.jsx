@@ -200,17 +200,15 @@ export default function Tasks() {
         </DialogContent>
 
         <DialogActions>
-          {canEdit && (
-            <Button
-              loading={loading}
-              disabled={loading}
-              variant="contained"
-              color="success"
-              onClick={() => formRef?.current?.submit()}
-            >
-              {selectedItem ? 'Save' : 'Create '}
-            </Button>
-          )}
+          <Button
+            loading={loading}
+            disabled={loading}
+            variant="contained"
+            color="success"
+            onClick={() => formRef?.current?.submit()}
+          >
+            {selectedItem ? 'Save' : 'Create '}
+          </Button>
 
           <Button loading={loading} disabled={loading} variant="outlined" onClick={handleClose}>
             Cancel

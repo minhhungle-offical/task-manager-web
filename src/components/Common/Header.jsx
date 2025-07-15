@@ -1,9 +1,8 @@
-import audio from '@/assets/audios/audio.mp3'
 import { notificationActions } from '@/stores/slices/notificationSlice'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import LogoutIcon from '@mui/icons-material/Logout'
 import NotificationsIcon from '@mui/icons-material/Notifications'
-import { Avatar, Button } from '@mui/material'
+import { Avatar } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
@@ -36,7 +35,6 @@ export function Header({ profile, logout }) {
   const { count } = useSelector((state) => state.notification)
 
   const isMenuOpen = Boolean(anchorEl)
-  const notificationSound = new Audio(audio)
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget)
@@ -50,28 +48,6 @@ export function Header({ profile, logout }) {
     handleMenuClose()
     navigate(pathname)
   }
-
-  // useEffect(() => {
-  //   if (!socket || !profile?.id) return
-
-  //   socket.emit('joinRoom', profile.id)
-
-  //   const handleTaskAssigned = (data) => {
-  //     console.log(data.type)
-  //     if (data?.type === 'task') {
-  //       dispatch(notificationActions.incrementTask())
-  //     }
-  //     notificationSound.currentTime = 0
-  //     notificationSound.play()
-  //   }
-
-  //   socket.on('task-assigned', handleTaskAssigned)
-
-  //   return () => {
-  //     socket.off('task-assigned', handleTaskAssigned)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [profile?.id])
 
   const menuId = 'primary-search-account-menu'
   const renderMenu = (
@@ -107,7 +83,6 @@ export function Header({ profile, logout }) {
     <Box sx={{ width: '100%' }}>
       <AppBar position="static" elevation={0} color="inherit" sx={{ bgcolor: 'transparent' }}>
         <Toolbar>
-          <Button onClick={() => notificationSound.play()}>Click</Button>
           <Box sx={{ flexGrow: 1 }} />
 
           <IconButton

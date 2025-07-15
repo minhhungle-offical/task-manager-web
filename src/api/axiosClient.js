@@ -1,9 +1,8 @@
+import { baseUrl } from '@/constants/common'
 import axios from 'axios'
 
-const baseURL = `${import.meta.env.VITE_API_BASE_URL}/api` //'http://localhost:3000/api' ////
-
 const axiosClient = axios.create({
-  baseURL,
+  baseURL: `${baseUrl}/api`,
   headers: {
     'Content-Type': 'application/json',
   },

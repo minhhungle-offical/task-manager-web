@@ -1,6 +1,7 @@
+import { baseUrl } from '@/constants/common'
 import { io } from 'socket.io-client'
 
-const socket = io(`${import.meta.env.VITE_API_BASE_URL}`, {
+const socket = io(baseUrl, {
   transports: ['websocket'],
   withCredentials: true,
 })

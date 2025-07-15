@@ -1,17 +1,4 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-.
+task-manager-web
 ├── eslint.config.js
 ├── index.html
 ├── jsconfig.json
@@ -57,3 +44,41 @@ If you are developing a production application, we recommend using TypeScript wi
 │ └── socket.js
 ├── vite.config.js
 └── yarn.lock
+
+## Overview
+
+This is a mini task management app built for Skipli’s coding challenge.
+
+It includes:
+
+- Login with OTP (SMS/email)
+- Realtime employee management
+- Task assignment
+- Chat messaging via socket.io
+
+---
+
+## Tech Stack
+
+- React
+- Vite
+- MUI
+- Socket.IO Client
+- Redux Toolkit thunk (state management)
+
+## GIT
+
+```bash
+GIT HTTPS: git clone https://github.com/minhhungle-offical/task-manager-web.git
+GIT SSH: git clone git@github.com:minhhungle-offical/task-manager-web.git
+```
+
+## Environment Variables
+
+| Variable            | Description                 |
+| ------------------- | --------------------------- |
+| `VITE_API_BASE_URL` | Base URL of the backend API |
+
+## Prerequisites
+
+- Node.js >= 18 // v22.17.0

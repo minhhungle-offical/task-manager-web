@@ -1,7 +1,6 @@
 import { Delete, Edit } from '@mui/icons-material'
 import { Box, Chip, Tooltip, alpha } from '@mui/material'
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid'
-import Visibility from '@mui/icons-material/Visibility'
 import dayjs from 'dayjs'
 
 export function TaskList({
@@ -112,7 +111,7 @@ export function TaskList({
           <GridActionsCellItem
             icon={
               <Tooltip title="View">
-                <Visibility color="primary" />
+                <Edit color="primary" />
               </Tooltip>
             }
             label="View"
