@@ -13,3 +13,5 @@ export const STATUS = {
 export function debug(title, data) {
   return console.log(`[DEBUG] ${title}: `, data)
 }
+
+export const OTP_TTL_SECONDS = 120

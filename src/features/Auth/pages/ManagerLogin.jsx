@@ -1,4 +1,4 @@
-import { STATUS } from '@/constants/common'
+import { OTP_TTL_SECONDS, STATUS } from '@/constants/common'
 import {
   authActions,
   loginByPhone,
@@ -23,16 +23,12 @@ function formatTime(seconds) {
 
 export function ManagerLogin() {
   const [showVerify, setShowVerify] = useState(false)
-  const [counter, setCounter] = useState(30)
+  const [counter, setCounter] = useState(OTP_TTL_SECONDS)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const status = useSelector((state) => state.auth.status)
-  const phone = useSelector((state) => state.auth.phone)
-  const token = useSelector((state) => state.auth.token)
-  const error = useSelector((state) => state.auth.error)
-  const profile = useSelector((state) => state.auth.profile)
-  const accessCodeId = useSelector((state) => state.auth.accessCodeId)
+
+  const { status, phone, token, error, profile, accessCodeId } = useSelector((state) => state.auth)
 
   useEffect(() => {
     if (counter > 0) {
@@ -78,7 +74,7 @@ export function ManagerLogin() {
 
   function handleResend() {
     dispatch(resendOtpByPhone({ phone, accessCodeId }))
-    setCounter(30)
+    setCounter(OTP_TTL_SECONDS)
   }
 
   if (token) {
@@ -118,8 +114,9 @@ export function ManagerLogin() {
             <Typography variant="h5" fontWeight={600}>
               Verify OTP
             </Typography>
+
             <Typography variant="body2" color="text.secondary">
-              Enter the 6-digit code sent to your email
+              Enter the 6-digit code sent to your phone
             </Typography>
           </Box>
 

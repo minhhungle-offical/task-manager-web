@@ -11,7 +11,6 @@ export function InputField({
   onFieldChange,
   required,
   disabled,
-
   ...props
 }) {
   const {

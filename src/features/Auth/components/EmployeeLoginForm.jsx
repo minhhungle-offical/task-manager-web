@@ -1,8 +1,8 @@
 import { InputField } from '@/components/FormFields/InputField'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Button, Stack } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 const schema = z.object({
   email: z.string().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'),

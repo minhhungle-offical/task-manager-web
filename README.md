@@ -10,3 +10,50 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+.
+├── eslint.config.js
+├── index.html
+├── jsconfig.json
+├── package.json
+├── public
+│ └── vite.svg
+├── README.md
+├── src
+│ ├── api
+│ │ ├── authApi.js
+│ │ ├── axiosClient.js
+│ │ ├── employeeApi.js
+│ │ ├── managerApi.js
+│ │ ├── messageApi.js
+│ │ └── taskApi.js
+│ ├── App.css
+│ ├── App.jsx
+│ ├── assets
+│ │ ├── audios
+│ │ ├── react.svg
+│ │ └── vite.svg
+│ ├── components
+│ │ ├── Common
+│ │ ├── FormFields
+│ │ └── Layouts
+│ ├── constants
+│ │ └── common.js
+│ ├── features
+│ │ ├── Auth
+│ │ ├── Employees
+│ │ ├── Main
+│ │ ├── Messages
+│ │ ├── Profile
+│ │ ├── Tasks
+│ │ └── Welcome
+│ ├── index.css
+│ ├── main.jsx
+│ ├── stores
+│ │ ├── rootReducer.js
+│ │ ├── slices
+│ │ └── store.js
+│ └── utils
+│ └── socket.js
+├── vite.config.js
+└── yarn.lock

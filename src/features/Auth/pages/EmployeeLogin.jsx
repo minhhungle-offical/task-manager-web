@@ -1,4 +1,4 @@
-import { STATUS } from '@/constants/common'
+import { OTP_TTL_SECONDS, STATUS } from '@/constants/common'
 import {
   authActions,
   loginByEmail,
@@ -23,17 +23,12 @@ function formatTime(seconds) {
 
 export function EmployeeLogin() {
   const [showVerify, setShowVerify] = useState(false)
-  const [counter, setCounter] = useState(30)
+  const [counter, setCounter] = useState(OTP_TTL_SECONDS)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const status = useSelector((state) => state.auth.status)
-  const email = useSelector((state) => state.auth.email)
-  const token = useSelector((state) => state.auth.token)
-  const error = useSelector((state) => state.auth.error)
-  const profile = useSelector((state) => state.auth.profile)
-  const accessCodeId = useSelector((state) => state.auth.accessCodeId)
+  const { status, email, token, error, profile, accessCodeId } = useSelector((state) => state.auth)
 
   useEffect(() => {
     if (counter > 0) {
@@ -78,7 +73,7 @@ export function EmployeeLogin() {
 
   function handleResend() {
     dispatch(resendOtpByEmail({ email, accessCodeId }))
-    setCounter(30)
+    setCounter(OTP_TTL_SECONDS)
   }
 
   if (token) {
@@ -109,6 +104,7 @@ export function EmployeeLogin() {
             <Typography variant="h5" fontWeight={600}>
               Verify OTP
             </Typography>
+
             <Typography variant="body2" color="text.secondary">
               Enter the 6-digit code sent to your email
             </Typography>

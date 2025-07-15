@@ -12,23 +12,32 @@ const schema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
   assignedTo: z.string().optional(),
-  dueDate: z.string().optional(),
+  dueDate: z
+    .any()
+    .refine((val) => dayjs(val).isValid(), { message: 'Invalid date' })
+    .optional(),
 })
 
 export const AddEditTaskForm = forwardRef(
-  ({ loading = false, canEdit, data, onSubmit, userList }, ref) => {
+  ({ loading = false, canEdit = true, data = {}, onSubmit, userList = [] }, ref) => {
     const { control, handleSubmit } = useForm({
-      defaultValues: data || {
+      defaultValues: {
         title: data?.title || '',
         description: data?.description || '',
         assignedTo: data?.assignedTo || '',
-        dueDate: data?.dueDate ? dayjs(data.dueDate.toDate()) : dayjs(),
+        dueDate: data?.dueDate
+          ? dayjs(data?.dueDate.toDate ? data?.dueDate.toDate() : data?.dueDate)
+          : dayjs(),
       },
       resolver: zodResolver(schema),
     })
 
     const handleFormSubmit = handleSubmit((formValues) => {
-      onSubmit?.(formValues)
+      const payload = {
+        ...formValues,
+        dueDate: dayjs(formValues.dueDate).toDate(),
+      }
+      onSubmit?.(payload)
     })
 
     useImperativeHandle(ref, () => ({
@@ -37,41 +46,35 @@ export const AddEditTaskForm = forwardRef(
 
     return (
       <Stack spacing={2} component="form" onSubmit={handleFormSubmit} noValidate>
-        <Box>
-          <InputField name="title" label="Tilte" control={control} disabled={!canEdit || loading} />
-        </Box>
+        <InputField name="title" label="Title" control={control} disabled={!canEdit || loading} />
 
-        <Box>
-          <DateTimeField
-            name="dueDate"
-            label="Due Date"
-            control={control}
-            disabled={!canEdit || loading}
-          />
-        </Box>
+        <DateTimeField
+          name="dueDate"
+          label="Due Date"
+          control={control}
+          disabled={!canEdit || loading}
+        />
 
-        <Box>
-          <SelectField
-            name="assignedTo"
-            label="Assigned to"
-            control={control}
-            disabled={!canEdit || loading}
-            options={userList}
-          />
-        </Box>
+        <SelectField
+          name="assignedTo"
+          label="Assigned to"
+          control={control}
+          disabled={!canEdit || loading}
+          options={userList}
+        />
 
-        <Box>
-          <InputField
-            name="description"
-            label="Description"
-            control={control}
-            disabled={!canEdit || loading}
-            placeholder="Enter your name"
-            multiline
-            rows={4}
-          />
-        </Box>
+        <InputField
+          name="description"
+          label="Description"
+          control={control}
+          disabled={!canEdit || loading}
+          placeholder="Enter description"
+          multiline
+          rows={4}
+        />
       </Stack>
     )
   },
 )
+
+AddEditTaskForm.displayName = 'AddEditTaskForm'
