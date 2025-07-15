@@ -160,7 +160,7 @@ export default function Employees() {
 
       <Dialog fullWidth maxWidth="sm" open={showAddEdit} onClose={handleClose}>
         <DialogTitle variant="h5" fontWeight={600}>
-          {selectedItem ? 'Create Update Employee' : 'Create Employee'}
+          {selectedItem ? 'Update Employee' : 'Create Employee'}
         </DialogTitle>
         <DialogContent dividers>
           <Box>
