@@ -2,10 +2,10 @@ import { SearchBox } from '@/components/FormFields/SearchBox'
 import { Box, Button, Stack, Typography } from '@mui/material'
 
 export function TaskFilter({ total = 0, filter, onFilterChange }) {
-  function handleSearchName(value) {
+  function handleSearchTitle(value) {
     const newFilter = {
       ...filter,
-      name: value,
+      title: value,
     }
     onFilterChange?.(newFilter)
   }
@@ -17,7 +17,7 @@ export function TaskFilter({ total = 0, filter, onFilterChange }) {
       </Box>
 
       <Box>
-        <SearchBox onSearchChange={handleSearchName} placeholder="Search by name..." />
+        <SearchBox onSearchChange={handleSearchTitle} placeholder="Search by name..." />
       </Box>
     </Stack>
   )

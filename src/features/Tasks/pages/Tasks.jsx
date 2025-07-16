@@ -23,8 +23,6 @@ import { AddEditTaskForm } from '../components/AddEditTaskForm'
 import { TaskFilter } from '../components/TaskFilter'
 import { TaskList } from '../components/TaskList'
 import AddIcon from '@mui/icons-material/Add'
-import socket from '@/utils/socket'
-import { notificationActions } from '@/stores/slices/notificationSlice'
 
 export default function Tasks() {
   const [selectedItem, setSelectedItem] = useState(null)
@@ -61,25 +59,6 @@ export default function Tasks() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
-
-  useEffect(() => {
-    if (!socket || !profile?.id) return
-
-    socket.emit('joinRoom', profile.id)
-
-    const handleTaskAssigned = (msg) => {
-      console.log('msg: ', msg)
-      dispatch(notificationActions.incrementTask())
-      fetchData(filter)
-    }
-
-    socket.on('task-assigned', handleTaskAssigned)
-
-    return () => {
-      socket.off('task-assigned', handleTaskAssigned)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.id])
 
   function handleClose() {
     setSelectedItem(null)
